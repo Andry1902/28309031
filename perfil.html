@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <title>Andreina Velasquez</title>
+
+    <style>
+        h1, a{
+            color:orange
+        }
+
+        .correo:visited{
+            color:red
+        }
+        
+        .contenedor-principal {
+            display: flex;
+            align-items: stretch;
+            gap: 5px;
+        }
+        
+        .foto, .ficha{
+            border: 1px solid #000;
+        }
+        
+        .foto{
+            overflow: hidden;
+            border-radius: 60px 0 0 0;
+        }
+        
+        .ficha{
+            flex: 1;
+            padding: 0px 10px;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9);
+            border: 1px solid #000;
+        }
+        
+        .datos, .MisDatos {
+            font-family: Arial, Helvetica, sans-serif;
+            list-style-type: none;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .MisDatos {
+            margin-left: 30px;
+        }
+    
+        .foto img {
+            height: 100%;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div class="contenedor-principal">
+        <div class="foto">
+            <img src="img/28309031.jpg" width="270" height="304" alt="Andreina Velasquez Martinez">
+        </div>
+        
+        <div class="ficha">
+            <div>
+                <h1>Andreina Velasquez Martinez</h1>
+                <p>¡Bienvenido a mi perfil personal! Soy estudiante de Computación de la facultad de Ciencias, UCV.
+                    Actualmente estoy cursando la materia de Aplicaciones con la Tecnologias de Internet (ATI),
+                    donde estoy aprendiendo sobre las aplicaciones web, area en donde tengo un gran interes profesional.
+                    Asi que espero poder aplicar estos conocimientos en proyectos futuros.</p>
+            
+                <div class="datos">
+                    <li>Mi color favorito es:</li>
+                    <li>Mi libro favorito es:</li>
+                    <li>Mi estilo de musica preferida es: </li>
+                    <li>Video juegos favoritos:</li>
+                    <li><b>Lenguajes aprendidos:</b></li>
+                </div>
+                
+                <div class="MisDatos">
+                    <li>Morado</li>
+                    <li>Los Siete Maridos de Evelyn Hugo</li>
+                    <li>Pop</li>
+                    <li>Hollow Knight</li>
+                    <li><b>C++, C, Python, Ruby, JavaScript</b></li>
+                </div>
+
+                <p>Si necesita comunicarse conmigo me pueden escribir a: <a href="mailto:andreina.velasquez@ucv.edu.ve" class="correo">andreina.velasquez@ucv.edu.ve</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
