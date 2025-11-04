@@ -1,0 +1,118 @@
+footer, nav ul{
+    background-color: #99c5dd;
+}
+footer p{
+    text-align: center;
+    padding: 10px;
+}
+
+nav ul{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    color: white;
+}
+
+.UCV{
+    font-size: 0.5em;
+    vertical-align: sub;
+    align-self: flex-end;
+}
+
+nav ul li {
+    display: flex;
+    align-items: center;
+}
+
+nav ul li:first-child {
+    font-size: 30px;
+}
+
+nav ul li:nth-child(2) {
+    font-size: 16px;
+}
+
+.busqueda-boton {
+    color:#99c5dd;
+}
+
+
+.contenedor-cajas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.caja-estudiante {
+    background-color: rgb(236, 235, 235);
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.foto-estudiante {
+    width: 100px;
+    height: 150px;
+    margin-bottom: 10px;
+}
+.nombre-estudiante {
+    color:#99c5dd;
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Estilos de perfil */
+
+h1, a{
+    color: orange;
+}
+
+.correo:visited{
+    color: red;
+}
+
+.contenedor-principal {
+    display: flex;
+    align-items: stretch;
+    gap: 5px;
+}
+
+.foto, .ficha{
+    border: 1px solid #000;
+}
+
+.foto{
+    overflow: hidden;
+    border-radius: 60px 0 0 0;
+}
+
+.ficha{
+    flex: 1;
+    padding: 0px 10px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9);
+    border: 1px solid #000;
+}
+
+.datos, .MisDatos {
+    font-family: Arial, Helvetica, sans-serif;
+    list-style-type: none;
+    display: inline-block;
+    vertical-align: top;
+}
+.MisDatos {
+    margin-left: 30px;
+}
+
+.foto img {
+    height: 100%;
+}
+
