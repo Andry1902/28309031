@@ -1,5 +1,5 @@
 footer, nav ul{
-    background-color: #99c5dd;
+    background-color: #60add6;
 }
 footer p{
     text-align: center;
@@ -79,7 +79,7 @@ nav ul li:nth-child(2) {
     margin-top: 10px;
 }
 .nombre-estudiante {
-    color:#99c5dd;
+    color:#60add6;
     font-size: 18px;
     font-family: Arial, Helvetica, sans-serif;
 }
