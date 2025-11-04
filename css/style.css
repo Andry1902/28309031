@@ -59,6 +59,13 @@ nav ul li:nth-child(2) {
     min-height: 200px;
 }
 
+.caja-estudiante:hover {
+    transform-origin: center center;
+    transform: rotate(10deg);
+    zoom: 1.1;
+    background-color: #99c5dd;
+}
+
 .foto-estudiante {
     width: 100px;
     height: 150px;
