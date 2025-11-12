@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <title>ATI[UCV] 2025-2</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -12,12 +12,12 @@
             <ul>
                 <li>ATI<span class="UCV">[UCV]</span> 2025-2</li>
                 <li>Hola, Andreina Velasquez</li>
-                <li><form>
-                    <div class="barra-busqueda"></div>
-                        <input type="text" class="busqueda-input" placeholder="Nombre...">
-                        <button class="busqueda-boton">Buscar</button>
-                    </div>
-                </form></li>
+                <li>
+                    <form id="search-form">
+                        <input type="text" id="search-input" class="busqueda-input" placeholder="Nombre...">
+                        <button type="submit" id="search-button" class="busqueda-boton">Buscar</button>
+                    </form>
+                </li>
             </ul>
         </nav>
     </header>
@@ -25,8 +25,8 @@
     <section>
         <div class="listado-estudiantes">
             <div class="contenedor-cajas">
-                <div class="caja-estudiante">
-                    <a href ="perfil.html";>
+                <div class="caja-estudiante" id="student-andreina">
+                    <a href="28309031/perfil.html">
                     <img src="img/28309031.jpg" alt="Andreina Velasquez" class="foto-estudiante">
                     <span class="nombre-estudiante">Andreina Velasquez Martinez</span>
                     </a>    
@@ -45,7 +45,7 @@
                 </div>
              </div>
 
-            <br /> <!-- Segunda fila de estudiantes -->
+            <br />
             <div class="contenedor-cajas">
                 <div class="caja-estudiante">
                     <img src="dummies/dummy3/dummy.jpg" alt="Irma Martinez" class="foto-estudiante">
@@ -65,7 +65,7 @@
                 </div>
              </div>
         </div>
-        <br /> <!-- Tercera fila de estudiantes -->
+        <br />
         <div class="contenedor-cajas">
             <div class="caja-estudiante">
                 <img src="dummies/dummy4/dummy.jpg" alt="Brian Mendoza" class="foto-estudiante">
@@ -84,13 +84,10 @@
                 <span class="nombre-estudiante">Karol Mena</span>
             </div>
         </div>
-
     </section>
 
     <footer>
-        <p>Copyright © 2025 Escuela de computación -
-            ATI. Todos los derechos reservados</p>
-        
+        <p>Copyright © 2025 Escuela de computación - ATI. Todos los derechos reservados</p>
     </footer>   
 </body>
 </html>

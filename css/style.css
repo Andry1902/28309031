@@ -90,7 +90,7 @@ h1, a{
     color: orange;
 }
 
-.correo:visited{
+.correo:active{
     color: red;
 }
 
@@ -114,6 +114,8 @@ h1, a{
     padding: 0px 10px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9);
     border: 1px solid #000;
+    font-style: italic;
+    font-size: 1.1em;
 }
 
 .datos, .MisDatos {
@@ -130,3 +132,26 @@ h1, a{
     height: 100%;
 }
 
+/* IDs para el responsive y futura automatizacion*/
+
+#search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#search-input {
+    width: clamp(120px, 20vw, 200px);
+}
+
+#search-button {
+    cursor: pointer;
+}
+
+#student-andreina {
+    cursor: pointer;
+}
+
+#profile-name {
+    font-size: clamp(24px, 4vw, 32px);
+}
