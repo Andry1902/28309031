@@ -2,38 +2,59 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <title>Andreina Velasquez</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="contenedor-principal">
         <div class="foto">
-            <img src="../img/28309031.jpg" width="270" height="304" alt="Andreina Velasquez Martinez">
+            
+            <img src="img/28309031Pequena.jpg" 
+                 srcset="img/28309031Pequena.jpg 1x"
+                 width="270" 
+                 height="304" 
+                 alt="Andreina Velasquez Martinez"
+                 class="foto-perfil">
         </div>
         
         <div class="ficha">
             <div>
                 <h1 id="profile-name">Andreina Velasquez Martinez</h1>
-                <p>¡Bienvenido a mi perfil personal! Soy estudiante de Computación de la facultad de Ciencias, UCV.
+                <p id="info-Andreina">¡Bienvenido a mi perfil personal! Soy estudiante de Computación de la facultad de Ciencias, UCV.
                     Actualmente estoy cursando la materia de Aplicaciones con la Tecnologias de Internet (ATI),
                     donde estoy aprendiendo sobre las aplicaciones web, area en donde tengo un gran interes profesional.
                     Asi que espero poder aplicar estos conocimientos en proyectos futuros.</p>
             
-                <div class="datos">
-                    <li>Mi color favorito es:</li>
-                    <li>Mi libro favorito es:</li>
-                    <li>Mi estilo de musica preferida es: </li>
-                    <li>Video juegos favoritos:</li>
-                    <li><b>Lenguajes aprendidos:</b></li>
-                </div>
-                
-                <div class="MisDatos">
-                    <li>Morado</li>
-                    <li>Los Siete Maridos de Evelyn Hugo</li>
-                    <li>Pop</li>
-                    <li>Hollow Knight</li>
-                    <li><b>C++, C, Python, Ruby, JavaScript</b></li>
+                <div class="contenedor-datos">
+                    <div class="datos">
+                        <ul>
+                            <li>Mi color favorito es:</li>
+                            <li>Mi libro favorito es:</li>
+                            <li>Mi estilo de musica preferida es: </li>
+                            <li>Video juegos favoritos:</li>
+                            <li><b>Lenguajes aprendidos:</b></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="MisDatos">
+                        <ul>
+                            <li>Morado</li>
+                            <li>Los Siete Maridos de Evelyn Hugo</li>
+                            <li>Pop</li>
+                            <li>Hollow Knight</li>
+                            <li><b>C++, C, Python, Ruby, JavaScript</b></li>
+                        </ul>
+                    </div>
+
+                    <p class="MisDatos-movil">
+                        Mi color favorito es: Morado <br />
+                        Mi libro favorito es: Los Siete Maridos de Evelyn Hugo <br />
+                        Mi estilo de musica preferida es: Pop <br />
+                        Video juegos favoritos: Hollow Knight <br />
+                        <b>Lenguajes aprendidos: C++, C, Python, Ruby, JavaScript</b>
+                    </p>
                 </div>
 
                 <p>Si necesita comunicarse conmigo me pueden escribir a: <a href="mailto:andreina.velasquez@ucv.edu.ve" id="email-link" class="correo">andreina.velasquez@ucv.edu.ve</a></p>

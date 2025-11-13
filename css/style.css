@@ -1,157 +1,341 @@
-footer, nav ul{
-    background-color: #60add6;
+/* Estilos base */
+footer, nav ul {
+  background-color: #60add6;
 }
-footer p{
-    text-align: center;
-    padding: 10px;
-}
-
-nav ul{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    list-style: none;
-    color: white;
+footer p {
+  text-align: center;
+  padding: 10px;
 }
 
-.UCV{
-    font-size: 0.5em;
-    vertical-align: sub;
-    align-self: flex-end;
+nav ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+  color: white;
+}
+
+.UCV {
+  font-size: 0.5em;
+  vertical-align: sub;
+  align-self: flex-end;
 }
 
 nav ul li {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 nav ul li:first-child {
-    font-size: 30px;
+  font-size: 30px;
 }
 
 nav ul li:nth-child(2) {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 .busqueda-boton {
-    color:#99c5dd;
+  color: #99c5dd;
 }
 
-
 .contenedor-cajas {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .caja-estudiante {
-    background-color: rgb(236, 235, 235);
-    border: 1px solid #ddd;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+  background-color: rgb(236, 235, 235);
+  border: 1px solid #ddd;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
-.caja-estudiante a{
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.caja-estudiante a {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .caja-estudiante:hover {
-    transform-origin: center center;
-    transform: rotate(10deg);
-    zoom: 1.1;
-    background-color: #99c5dd;
+  transform-origin: center center;
+  transform: rotate(10deg);
+  zoom: 1.1;
+  background-color: #99c5dd;
 }
 
 .foto-estudiante {
-    width: 100px;
-    height: 150px;
-    margin-bottom: 10px;
-    margin-top: 10px;
+  width: 100px;
+  height: 150px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 .nombre-estudiante {
-    color:#60add6;
-    font-size: 18px;
-    font-family: Arial, Helvetica, sans-serif;
+  color: #60add6;
+  font-size: 18px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Estilos de perfil */
 
-h1, a{
-    color: orange;
+h1, a {
+  color: orange;
 }
 
-.correo:active{
-    color: red;
+.correo:active {
+  color: red;
 }
 
 .contenedor-principal {
-    display: flex;
-    align-items: stretch;
-    gap: 5px;
+  display: flex;
+  align-items: stretch;
+  gap: 5px;
 }
 
-.foto, .ficha{
-    border: 1px solid #000;
+.foto, .ficha {
+  border: 1px solid #000;
 }
 
-.foto{
-    overflow: hidden;
-    border-radius: 60px 0 0 0;
+.foto {
+  overflow: hidden;
+  border-radius: 60px 0 0 0;
 }
 
-.ficha{
-    flex: 1;
-    padding: 0px 10px;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9);
-    border: 1px solid #000;
-    font-style: italic;
-    font-size: 1.1em;
+.ficha {
+  flex: 1;
+  padding: 0px 10px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.9);
+  border: 1px solid #000;
+}
+
+.MisDatos-movil {
+  display: none;
 }
 
 .datos, .MisDatos {
     font-family: Arial, Helvetica, sans-serif;
-    list-style-type: none;
     display: inline-block;
     vertical-align: top;
+    margin-left: 5px;
 }
+
+.datos ul, .MisDatos ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
 .MisDatos {
-    margin-left: 30px;
+  margin-left: 30px;
 }
 
 .foto img {
-    height: 100%;
+  height: 100%;
 }
 
-/*IDs para el responsive y futura automatizacion*/
+#info-Andreina {
+  font-style: italic;
+  font-size: 1.3em;
+}
+
+/* IDs para el responsive y futura automatizacion*/
 
 #search-form {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 #search-input {
-    width: clamp(120px, 20vw, 200px);
+  width: clamp(120px, 20vw, 200px);
 }
 
 #search-button {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 #student-andreina {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 #profile-name {
-    font-size: clamp(24px, 4vw, 32px);
+  font-size: clamp(24px, 4vw, 32px);
+}
+
+/* Media Queries para Responsive Design */
+
+/* Dispositivos móviles (320px — 480px) */
+@media screen and (max-width: 480px) {
+  .contenedor-principal {
+    flex-direction: column;
+    padding: 5px;
+  }
+
+  .foto {
+    border-radius: 40px 0 0 0;
+    align-self: center;
+  }
+
+  /* Imagen pequeña para móviles */
+  .foto img {
+    content: url("img/28309031Pequena.jpg");
+    width: 400px;
+    height: auto;
+    max-width: 100%;
+  }
+
+  .ficha {
+    padding: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  #info-Andreina {
+    font-size: 1.1em;
+  }
+
+.datos, .MisDatos{
+    display: none;
+}
+
+.MisDatos-movil {
+    display: block;
+    list-style-type: none;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left: 10px;
+  }
+
+  /* Fuentes más grandes para móviles */
+  body {
+    font-size: 18px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  #profile-name {
+    font-size: 26px;
+  }
+}
+
+/* iPads, tablets (481px — 768px) */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .contenedor-principal {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .foto {
+    border-radius: 50px 0 0 0;
+    align-self: center;
+    margin-bottom: 5px;
+  }
+
+  .foto img {
+    content: url("img/28309031Pequena.jpg");
+    width: 500px;
+    height: auto;
+    max-width: 100%;
+  }
+
+  .ficha {
+    padding: 20px;
+  }
+
+  .datos, .MisDatos{
+    display: none;
+}
+
+.MisDatos-movil {
+    display: block;
+    list-style-type: none;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left: 10px;
+  }
+
+
+  /* Fuentes más pequeñas para tablets */
+  body {
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  #profile-name {
+    font-size: 24px;
+  }
+}
+
+/* Pantallas pequeñas, ordenadores portátiles (769px — 1024px) */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .contenedor-principal {
+    padding: 20px;
+  }
+
+  .foto {
+    flex: 0 0 250px;
+    text-align: center;
+  }
+
+  /* Imagen grande para laptops */
+  .foto img {
+    content: url("img/28309031Grande.jpg");
+    width: 100%;
+    height: 100%;
+    max-width: 250px;
+  }
+  .datos, .MisDatos{
+    display: none;
+}
+
+.MisDatos-movil {
+    display: block;
+    list-style-type: none;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left: 10px;
+  }
+
+
+  /* Fuentes más pequeñas para laptops */
+  body {
+    font-size: 15px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  #profile-name {
+    font-size: 22px;
+  }
+}
+
+/* Pantallas grandes, ordenadores de escritorio (1025px — 1200px) */
+@media screen and (min-width: 1025px) {
+  .contenedor-principal {
+    padding: 30px;
+  }
+
+  .foto {
+    flex: 0 0 270px;
+    text-align: center;
+  }
+
+  /* Imagen grande para escritorio */
+  .foto img {
+    content: url("img/28309031Grande.jpg");
+    width: 100%;
+    height: 100%;
+    max-width: 270px;
+  }
 }
