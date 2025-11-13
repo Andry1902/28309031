@@ -44,6 +44,7 @@ nav ul li:nth-child(2) {
   gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
 }
 
 .caja-estudiante {
@@ -65,6 +66,7 @@ nav ul li:nth-child(2) {
   flex-direction: column;
   align-items: center;
 }
+
 .caja-estudiante:hover {
   transform-origin: center center;
   transform: rotate(10deg);
@@ -78,11 +80,20 @@ nav ul li:nth-child(2) {
   margin-bottom: 10px;
   margin-top: 10px;
 }
+
 .nombre-estudiante {
   color: #60add6;
   font-size: 18px;
   font-family: Arial, Helvetica, sans-serif;
 }
+.foto-pequena-responsive {
+  display: block; /* por defecto */
+}
+
+.foto-grande-responsive {
+  display: none; 
+}
+
 
 /* Estilos de perfil */
 
@@ -120,17 +131,18 @@ h1, a {
   display: none;
 }
 
-.datos, .MisDatos {
-    font-family: Arial, Helvetica, sans-serif;
-    display: inline-block;
-    vertical-align: top;
-    margin-left: 5px;
+.datos,
+.MisDatos {
+  font-family: Arial, Helvetica, sans-serif;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 5px;
 }
 
 .datos ul, .MisDatos ul {
-    list-style-type: none;
-    padding-left: 0;
-    margin: 0;
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
 }
 
 .MisDatos {
@@ -170,10 +182,40 @@ h1, a {
   font-size: clamp(24px, 4vw, 32px);
 }
 
-/* Media Queries para Responsive Design */
+/* MEDIA QUERIES*/
 
 /* Dispositivos móviles (320px — 480px) */
 @media screen and (max-width: 480px) {
+
+  .contenedor-cajas {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 10px;
+  }
+  nav ul {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+  .caja-estudiante {
+    padding: 25px;
+  }
+
+  .foto-estudiante {
+    width: 120px;
+    height: 180px;
+  }
+
+  .nombre-estudiante {
+    font-size: 16px;
+  }
+.foto-pequena-responsive {
+  display: none;
+}
+
+.foto-grande-responsive {
+  display: block;
+}
   .contenedor-principal {
     flex-direction: column;
     padding: 5px;
@@ -184,9 +226,7 @@ h1, a {
     align-self: center;
   }
 
-  /* Imagen pequeña para móviles */
   .foto img {
-    content: url("img/28309031Pequena.jpg");
     width: 400px;
     height: auto;
     max-width: 100%;
@@ -201,18 +241,19 @@ h1, a {
     font-size: 1.1em;
   }
 
-.datos, .MisDatos{
+  .datos,
+  .MisDatos {
     display: none;
-}
+  }
 
-.MisDatos-movil {
+  .MisDatos-movil {
     display: block;
     list-style-type: none;
     font-family: Arial, Helvetica, sans-serif;
     margin-left: 10px;
   }
 
-  /* Fuentes más grandes para móviles */
+  /* Fuentes mas grandes para moviles */
   body {
     font-size: 18px;
   }
@@ -226,13 +267,43 @@ h1, a {
   }
 }
 
-/* iPads, tablets (481px — 768px) */
+/* tablets (481px — 768px) */
 @media screen and (min-width: 481px) and (max-width: 768px) {
+  .contenedor-cajas {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .caja-estudiante {
+    padding: 22px;
+  }
+
+  .foto-estudiante {
+    width: 110px;
+    height: 165px;
+  }
+
+  .nombre-estudiante {
+    font-size: 16px;
+  }
+
+   .foto-pequena-responsive {
+    display: block;
+  }
+
+  .foto-grande-responsive {
+    display: none;
+  }
   .contenedor-principal {
     flex-direction: column;
     padding: 15px;
   }
-
+  nav ul {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
   .foto {
     border-radius: 50px 0 0 0;
     align-self: center;
@@ -240,7 +311,6 @@ h1, a {
   }
 
   .foto img {
-    content: url("img/28309031Pequena.jpg");
     width: 500px;
     height: auto;
     max-width: 100%;
@@ -250,19 +320,19 @@ h1, a {
     padding: 20px;
   }
 
-  .datos, .MisDatos{
+  .datos,
+  .MisDatos {
     display: none;
-}
+  }
 
-.MisDatos-movil {
+  .MisDatos-movil {
     display: block;
     list-style-type: none;
     font-family: Arial, Helvetica, sans-serif;
     margin-left: 10px;
   }
 
-
-  /* Fuentes más pequeñas para tablets */
+  /* Fuentes mas pequeñas*/
   body {
     font-size: 16px;
   }
@@ -276,8 +346,36 @@ h1, a {
   }
 }
 
-/* Pantallas pequeñas, ordenadores portátiles (769px — 1024px) */
+/* Pantallas pequeñas, ordenadores portatiles (769px — 1024px) */
 @media screen and (min-width: 769px) and (max-width: 1024px) {
+
+  .contenedor-cajas {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    padding: 18px;
+  }
+
+  .caja-estudiante {
+    padding: 20px;
+  }
+
+  .foto-estudiante {
+    width: 100px;
+    height: 150px;
+  }
+
+  .nombre-estudiante {
+    font-size: 17px;
+  }
+
+  .foto-pequena-responsive {
+    display: none;
+  }
+
+  .foto-grande-responsive {
+    display: block;
+  }
+
   .contenedor-principal {
     padding: 20px;
   }
@@ -287,26 +385,25 @@ h1, a {
     text-align: center;
   }
 
-  /* Imagen grande para laptops */
   .foto img {
-    content: url("img/28309031Grande.jpg");
     width: 100%;
     height: 100%;
     max-width: 250px;
   }
-  .datos, .MisDatos{
-    display: none;
-}
 
-.MisDatos-movil {
+  .datos,
+  .MisDatos {
+    display: none;
+  }
+
+  .MisDatos-movil {
     display: block;
     list-style-type: none;
     font-family: Arial, Helvetica, sans-serif;
     margin-left: 10px;
   }
 
-
-  /* Fuentes más pequeñas para laptops */
+  /* Fuentes mas pequeñas para laptops */
   body {
     font-size: 15px;
   }
@@ -322,6 +419,34 @@ h1, a {
 
 /* Pantallas grandes, ordenadores de escritorio (1025px — 1200px) */
 @media screen and (min-width: 1025px) {
+
+  .contenedor-cajas {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .caja-estudiante {
+    padding: 20px;
+  }
+
+  .foto-estudiante {
+    width: 100px;
+    height: 150px;
+  }
+
+  .nombre-estudiante {
+    font-size: 18px;
+  }
+
+  /* imagen grande */
+  .foto-pequena-responsive {
+    display: none;
+  }
+
+  .foto-grande-responsive {
+    display: block;
+  }
   .contenedor-principal {
     padding: 30px;
   }
@@ -331,9 +456,7 @@ h1, a {
     text-align: center;
   }
 
-  /* Imagen grande para escritorio */
   .foto img {
-    content: url("img/28309031Grande.jpg");
     width: 100%;
     height: 100%;
     max-width: 270px;
