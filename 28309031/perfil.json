@@ -1,0 +1,16 @@
+const perfil = {	
+	"nombre":"Andreina Velasquez",
+	"descripcion":"Soy ¡Bienvenido a mi perfil personal! Soy estudiante de Computación de la facultad de Ciencias, UCV.
+                    Actualmente estoy cursando la materia de Aplicaciones con la Tecnologias de Internet (ATI),
+                    donde estoy aprendiendo sobre las aplicaciones web, area en donde tengo un gran interes profesional.
+                    Asi que espero poder aplicar estos conocimientos en proyectos futuros.",
+	"color": "Morado",
+	"libro": ["Los Siete Maridos de Evelyn Hugo"],
+	"musica": ["Pop"],
+	"video_juego": ["Hollow Knight"],
+	"lenguajes": ["C++", "C", "Python", "Ruby", "JavaScript"],
+	"email":"andreinacarolaineve.com",
+	"ci": "28309031",
+	"genero":"femenino",
+	"fecha_nacimiento":"19/02/2002"
+}
