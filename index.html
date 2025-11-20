@@ -6,18 +6,18 @@
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <title>ATI[UCV] 2025-2</title>
     <link rel="stylesheet" href="css/style.css">
-    <script type="text/javascript" src="conf/configES.json" defer></script>
-    <script src="js/index.js" ></script>
+    <script type="text/javascript" src="datos/index.json"></script>
+    <script type="text/javascript" src="js/index.js" defer></script>
 </head>
 <body>
     <header>
         <nav>
             <ul>
-                <li>ATI<span class="UCV">[UCV]</span> 2025-2</li>
-                <li>Hola, Andreina Velasquez</li>
+                <li >ATI<span class="UCV">[UCV]</span> 2025-2</li>
+                <li id="greeting">Hola,</li>
                 <li>
                     <form id="search-form">
-                        <input type="text" id="search-input" class="busqueda-input" placeholder="Nombre...">
+                        <input type="text" id="searchInput" class="busqueda-input" placeholder="Nombre...">
                         <button type="submit" id="search-button" class="busqueda-boton">Buscar</button>
                     </form>
                 </li>
@@ -34,7 +34,7 @@
     </section>
 
     <footer>
-        <p>Copyright © 2025 Escuela de computación - ATI. Todos los derechos reservados</p>
+        <p id="footer-text">Copyright © 2025 Escuela de computación - ATI. Todos los derechos reservados</p>
     </footer>   
 </body>
 </html>

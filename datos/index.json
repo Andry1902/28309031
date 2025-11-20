@@ -1,9 +1,9 @@
 const perfiles = [
     {
         "ci":"28309031",
-        "imagen":"28309031/28309031.jpg",
+        "imagen":"28309031\/28309031.jpg",
         "nombre":"Andreina Velasquez"
-    }
+    },
     {
         "ci": "19371273",
         "imagen": "19371273\/19371273.jpg",
