@@ -105,3 +105,54 @@ function cargarEstudiantes() {
         contenedor.appendChild(estudianteDiv);
     });
 }
+
+function configurarBusqueda() {
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('searchInput');
+    
+    
+    function realizarBusqueda() {
+        const searchTerm = searchInput.value.trim();
+        const searchTermLower = searchTerm.toLowerCase();
+        
+        const mensajeAnterior = document.getElementById('mensaje-no-encontrado');
+        if (mensajeAnterior) {
+            mensajeAnterior.remove();
+        }
+        
+        let estudiantesEncontrados = 0;
+        
+        // Filtra estudiantes
+        document.querySelectorAll('.caja-estudiante').forEach(estudiante => {
+            const nombre = estudiante.querySelector('.nombre-estudiante').textContent.toLowerCase();
+            if (nombre.includes(searchTermLower) || searchTerm === '') {
+                estudiante.style.display = 'flex';
+                estudiantesEncontrados++;
+            } else {
+                estudiante.style.display = 'none';
+            }
+        });
+
+        if (estudiantesEncontrados === 0 && searchTerm !== '') {
+            const contenedor = document.getElementById('contenedor-estudiantes');
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.id = 'mensaje-no-encontrado';
+            mensajeDiv.style.cssText = `
+                text-align: center;
+                font-size: 40px;
+                color: #60add6;
+                grid-column: 1 / -1;
+                margin-top: 35%;
+                margin-bottom: 35%;
+            `;
+            mensajeDiv.textContent = `No hay alumnos que tengan en su nombre: ${searchTerm}`;
+            contenedor.appendChild(mensajeDiv);
+        }
+    }
+
+    searchInput.addEventListener('input', function() {
+        realizarBusqueda();
+    });
+    
+    
+}
