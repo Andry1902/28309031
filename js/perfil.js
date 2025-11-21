@@ -8,25 +8,81 @@ if (!ci) {
     throw new Error('CI no especificada en la URL.'); 
 }
 
-const perfilJsonPath = `${ci}/perfil.json`;
+// Cargar idioma 
+iniciarAplicacion();
 
-const script = document.createElement('script');
-script.src = perfilJsonPath;
-script.type = 'text/javascript';
+function iniciarAplicacion() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let language = urlParams.get('lang');
+    cargarIdioma(language);
+}
 
-script.onload = function() {
-    if (typeof perfil !== 'undefined' && perfil.ci === ci) {
-        renderizarPerfil(perfil);
-    } else {
-        mostrarError('No se pudo cargar el perfil. Verifica que el archivo exista.');
+function cargarIdioma(language) {
+    
+    const confLanguage = document.createElement('script');
+    confLanguage.src = `conf/config${language}.json`;
+    
+    confLanguage.onload = function() {
+        console.log('Idioma cargado correctamente:', config);
+        actualizarInterfaz();
+        //cargamos el perfil
+        cargarPerfil();
+    };
+    
+    confLanguage.onerror = function() {
+        console.error('Error cargando el archivo de idioma:', language);
+
+        const fallback = document.createElement('script');
+        fallback.src = 'conf/configES.json';
+        fallback.onload = function() {
+            actualizarInterfaz();
+            cargarPerfil();
+        };
+        document.head.appendChild(fallback);
+    };
+    
+    document.head.appendChild(confLanguage);
+}
+
+function actualizarInterfaz() {
+
+    const datosContainer = document.querySelector('.datos ul');
+    if (datosContainer && config) {
+        datosContainer.innerHTML = `
+            <li>${config.color}:</li>
+            <li>${config.libro}:</li>
+            <li>${config.musica}: </li>
+            <li>${config.video_juego}:</li>
+            <li><b>${config.lenguajes}:</b></li>
+        `;
     }
-};
 
-script.onerror = function() {
-    mostrarError(`Error al cargar el perfil: ${perfilJsonPath}`);
-};
+    const textEmail = document.querySelector('#ParaComunicarse');
+    if (textEmail && config) {
+        const emailPlaceholder = '<a href="#" id="email-link" class="correo"></a>';
+        textEmail.innerHTML = `${config.email} <a href="#" id="email-link" class="correo"></a>`;
+    }
+}
 
-document.head.appendChild(script);
+function cargarPerfil() {
+    const perfilJsonPath = `${ci}/perfil.json`;
+    console.log('Cargando perfil desde:', perfilJsonPath);
+
+    const script = document.createElement('script');
+    script.src = perfilJsonPath;
+    script.type = 'text/javascript';
+
+    script.onload = function() {
+        if (typeof perfil !== 'undefined' && perfil.ci === ci) {
+            console.log('Perfil cargado correctamente:', perfil.nombre);
+            renderizarPerfil(perfil);
+        } else {
+            mostrarError('No se pudo cargar el perfil. Verifica que el archivo exista.');
+        }
+    };
+
+    document.head.appendChild(script);
+}
 
 function renderizarPerfil(data) {
     document.title = data.nombre;
@@ -34,6 +90,7 @@ function renderizarPerfil(data) {
     const fotoContainer = document.querySelector('.foto');
     if (fotoContainer) {
         if(data.ci === '28309031') {
+            // Andreina responsive
             fotoContainer.innerHTML = `
                 <img src="${data.ci}/${data.ci}Pequena.jpg" 
                     alt="${data.nombre}"
@@ -43,7 +100,7 @@ function renderizarPerfil(data) {
                     class="foto-perfil foto-grande-responsive">
             `;
         } else {
-            // Otros estudiantes - una imagen normal
+            // Otros estudiantes
             fotoContainer.innerHTML = `
                 <img src="${data.ci}/${data.ci}.jpg"
                     alt="${data.nombre}" 
@@ -52,7 +109,6 @@ function renderizarPerfil(data) {
             `;
         }
     }
-    
 
     const nombreElement = document.getElementById('profile-name');
     if (nombreElement) {
@@ -80,9 +136,9 @@ function renderizarPerfil(data) {
         `;
     }
 
-    // Cargar los datos para dispositivos pequeños
+    // Cargar para dispositivos pequeños
     const misDatosMovil = document.getElementById('mis-datos-movil');
-    if (misDatosMovil) {
+    if (misDatosMovil && config) {
         const color = Array.isArray(data.color) ? data.color.join(', ') : data.color;
         const libro = Array.isArray(data.libro) ? data.libro.join(', ') : data.libro;
         const musica = Array.isArray(data.musica) ? data.musica.join(', ') : data.musica;
@@ -90,11 +146,11 @@ function renderizarPerfil(data) {
         const lenguajes = Array.isArray(data.lenguajes) ? data.lenguajes.join(', ') : data.lenguajes;
         
         misDatosMovil.innerHTML = `
-            Mi color favorito es: ${color} <br />
-            Mi libro favorito es: ${libro} <br />
-            Mi estilo de musica preferida es: ${musica} <br />
-            Video juegos favoritos: ${videojuego} <br />
-            <b>Lenguajes aprendidos: ${lenguajes}</b>
+            ${config.color}: ${color} <br />
+            ${config.libro}: ${libro} <br />
+            ${config.musica}: ${musica} <br />
+            ${config.video_juego}: ${videojuego} <br />
+            <b>${config.lenguajes}: ${lenguajes}</b>
         `;
     }
 
