@@ -23,7 +23,7 @@ function cargarIdioma(language) {
     confLanguage.src = `conf/config${language}.json`;
     
     confLanguage.onload = function() {
-        console.log('Idioma cargado correctamente:', config);
+        console.log('this:', this);
         actualizarInterfaz();
         //cargamos el perfil
         cargarPerfil();
@@ -74,11 +74,14 @@ function cargarPerfil() {
 
     script.onload = function() {
         if (typeof perfil !== 'undefined' && perfil.ci === ci) {
-            console.log('Perfil cargado correctamente:', perfil.nombre);
+            console.log('this:', this);
             renderizarPerfil(perfil);
-        } else {
-            mostrarError('No se pudo cargar el perfil. Verifica que el archivo exista.');
-        }
+        } 
+    };
+
+    script.onerror = function() {
+        mostrarError(`Error al cargar el perfil: ${this.src}`);
+        document.body.innerHTML = `<h1>Ups, no pudimos encontrar el perfil solicitado </h1>`;
     };
 
     document.head.appendChild(script);
@@ -105,55 +108,41 @@ function renderizarPerfil(data) {
                 <img src="${data.ci}/${data.ci}.jpg"
                     alt="${data.nombre}" 
                     class="foto-perfil"
-                    onerror="this.src='dummies/dummy1/dummy.jpg'">
+                    onerror="manejarErrorImagen(this, '${data.ci}')">
             `;
         }
     }
 
-    const nombreElement = document.getElementById('profile-name');
-    if (nombreElement) {
-        nombreElement.textContent = data.nombre;
-    }
-    const infoElement = document.getElementById('info-student');
-    if (infoElement) {
-        infoElement.textContent = data.descripcion;
-    }
+    // this para elementos
+    const elementos = [
+        { selector: '#profile-name', prop: 'nombre', action: 'textContent' },
+        { selector: '#info-student', prop: 'descripcion', action: 'textContent' }
+    ];
+    
+    elementos.forEach(item => {
+        const elemento = document.querySelector(item.selector);
+        console.log('this:', this);
+        if (elemento) {
+            elemento[item.action] = data[item.prop];
+        }
+    });
 
     const misDatosLista = document.getElementById('mis-datos-lista');
     if (misDatosLista) {
-        const color = Array.isArray(data.color) ? data.color.join(', ') : data.color;
-        const libro = Array.isArray(data.libro) ? data.libro.join(', ') : data.libro;
-        const musica = Array.isArray(data.musica) ? data.musica.join(', ') : data.musica;
-        const videojuego = Array.isArray(data.video_juego) ? data.video_juego.join(', ') : data.video_juego;
-        const lenguajes = Array.isArray(data.lenguajes) ? data.lenguajes.join(', ') : data.lenguajes;
         
-        misDatosLista.innerHTML = `
-            <li>${color}</li>
-            <li>${libro}</li>
-            <li>${musica}</li>
-            <li>${videojuego}</li>
-            <li><b>${lenguajes}</b></li>
-        `;
+        const datos = ['color', 'libro', 'musica', 'video_juego', 'lenguajes'].map(function(prop) {
+            const valor = data[prop];
+            const esArray = Array.isArray(valor);
+            const contenido = esArray ? valor.join(', ') : valor;
+            const esLenguaje = prop === 'lenguajes';
+            
+            return esLenguaje ? `<b>${contenido}</b>` : contenido;
+        });
+        
+        misDatosLista.innerHTML = datos.map(dato => `<li>${dato}</li>`).join('');
     }
 
     // Cargar para dispositivos pequeños
-    const misDatosMovil = document.getElementById('mis-datos-movil');
-    if (misDatosMovil && config) {
-        const color = Array.isArray(data.color) ? data.color.join(', ') : data.color;
-        const libro = Array.isArray(data.libro) ? data.libro.join(', ') : data.libro;
-        const musica = Array.isArray(data.musica) ? data.musica.join(', ') : data.musica;
-        const videojuego = Array.isArray(data.video_juego) ? data.video_juego.join(', ') : data.video_juego;
-        const lenguajes = Array.isArray(data.lenguajes) ? data.lenguajes.join(', ') : data.lenguajes;
-        
-        misDatosMovil.innerHTML = `
-            ${config.color}: ${color} <br />
-            ${config.libro}: ${libro} <br />
-            ${config.musica}: ${musica} <br />
-            ${config.video_juego}: ${videojuego} <br />
-            <b>${config.lenguajes}: ${lenguajes}</b>
-        `;
-    }
-
     const emailLink = document.getElementById('email-link');
     if (emailLink) {
         emailLink.href = `mailto:${data.email}`;

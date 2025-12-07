@@ -49,7 +49,7 @@ function cargarIdioma(language) {
 
 function actualizarInterfaz() {
     
-    const tituloSitio = document.querySelector('nav ul li:first-child');
+    const tituloSitio = document.querySelector('.encabezado:first-child');
     if (tituloSitio && config && config.sitio) {
         tituloSitio.innerHTML = `${config.sitio[0]}<span class="UCV">[${config.sitio[1]}]</span> ${config.sitio[2]}`;
     }
@@ -145,7 +145,7 @@ function configurarBusqueda() {
                 margin-top: 35%;
                 margin-bottom: 35%;
             `;
-            mensajeDiv.textContent = `No hay alumnos que tengan en su nombre: ${searchTerm}`;
+            mensajeDiv.textContent = `${config.EstudianteNoEntontrado} ${searchTerm}`;
             contenedor.appendChild(mensajeDiv);
         }
     }
