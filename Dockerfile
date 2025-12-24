@@ -47,6 +47,8 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/ati.conf && \
     echo '' >> /etc/apache2/sites-available/ati.conf && \
     echo '    # WSGI Configuration - solo para rutas principales' >> /etc/apache2/sites-available/ati.conf && \
     echo '    WSGIScriptAliasMatch ^/(?!.*\.(css|js|jpg|jpeg|png|gif|ico|json|txt|py)$) /var/www/html/index.py' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    # WSGI Configuration' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    WSGIScriptAlias / /var/www/html/index.py' >> /etc/apache2/sites-available/ati.conf && \
     echo '    WSGIDaemonProcess ati python-path=/var/www/html python-home=/usr' >> /etc/apache2/sites-available/ati.conf && \
     echo '    WSGIProcessGroup ati' >> /etc/apache2/sites-available/ati.conf && \
     echo '    WSGIScriptReloading On' >> /etc/apache2/sites-available/ati.conf && \
