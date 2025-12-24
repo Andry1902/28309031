@@ -1,11 +1,8 @@
-FROM ubuntu:22.04
+FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Variables de entorno
-ENV APP_NAME=28309031
-ENV APP_DIR=/var/www/${APP_NAME}
-
+# Instalar dependencias
 RUN apt-get update -y && apt-get upgrade -y && \
     apt-get install -y \
     apache2 \
@@ -19,25 +16,58 @@ RUN apt-get update -y && apt-get upgrade -y && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN a2enmod wsgi
-RUN a2enmod rewrite
-RUN a2enmod headers
-RUN a2enmod expires
+# Habilitar módulos Apache
+RUN a2enmod wsgi rewrite headers expires
 
-# Python
-RUN pip3 install --no-cache-dir flask flask-cors
-RUN mkdir -p ${APP_DIR}
+# Copiar TODO el contenido del repositorio ATI al contenedor
+COPY . /var/www/html/
 
-# Configurar Apache para la aplicación
-COPY ati_app.conf /etc/apache2/sites-available/
-COPY ati_app.wsgi ${APP_DIR}/
+# Configurar permisos
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html
 
-# Habilitar el sitio y deshabilitar el default
-RUN a2dissite 000-default.conf
-RUN a2ensite ati_app.conf
+# Configuración Apache directamente en el Dockerfile
+RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/ati.conf && \
+    echo '    ServerName localhost' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    DocumentRoot /var/www/html' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    ErrorLog ${APACHE_LOG_DIR}/error.log' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    CustomLog ${APACHE_LOG_DIR}/access.log combined' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    # Archivos estáticos' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    Alias /css/ "/var/www/css/"' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    Alias /js/ "/var/www/js/"' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    Alias /conf/ "/var/www/conf/"' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    Alias /datos/ "/var/www/datos/"' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    <Directory "/var/www/html">' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Options Indexes FollowSymLinks' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        AllowOverride None' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Require all granted' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    </Directory>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    # WSGI Configuration' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    WSGIScriptAlias / /var/www/html/index.py' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    WSGIDaemonProcess ati python-home=/usr python-path=/var/www/html' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    WSGIProcessGroup ati' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    <Directory /var/www/html>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        WSGIApplicationGroup %{GLOBAL}' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        <Files index.py>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '            Require all granted' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        </Files>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    </Directory>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    # SPA Routing - redirect everything to index.py' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    RewriteEngine On' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    RewriteCond %{REQUEST_FILENAME} !-f' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    RewriteCond %{REQUEST_FILENAME} !-d' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    RewriteRule ^(.*)$ / [QSA,L]' >> /etc/apache2/sites-available/ati.conf && \
+    echo '</VirtualHost>' >> /etc/apache2/sites-available/ati.conf
 
-# Exponer puerto
+# Habilitar sitio
+RUN a2dissite 000-default.conf && a2ensite ati.conf
+
 EXPOSE 80
 
-# Comando para iniciar
 CMD ["apache2ctl", "-D", "FOREGROUND"]
