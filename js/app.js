@@ -1,365 +1,252 @@
-// ATI SPA Application - Single Page Application
 class ATIApp {
     constructor() {
         this.currentLang = 'ES';
         this.config = null;
         this.perfiles = null;
         this.currentCI = null;
-        
         this.init();
     }
     
     async init() {
-        // Detectar idioma desde URL
         const urlParams = new URLSearchParams(window.location.search);
-        const langParam = urlParams.get('lang');
-        this.currentLang = langParam || 'ES';
+        this.currentLang = urlParams.get('lang') || 'ES';
         this.currentCI = urlParams.get('ci');
         
-        // Cargar configuración y perfiles mediante AJAX
         await this.loadConfig();
         await this.loadPerfiles();
-        
-        // Configurar eventos
         this.setupEventListeners();
+        this.setupLoadingStates();
         
-        // Actualizar interfaz según la página actual
+        this.render();
+    }
+
+    async loadConfig() {
+        try {
+            const response = await fetch(`/conf/config${this.currentLang}.json`);
+            const text = await response.text();
+            this.config = JSON.parse(this.cleanJsonString(text));
+        } catch (e) {
+            const fallback = await fetch('/conf/configES.json');
+            const text = await fallback.text();
+            this.config = JSON.parse(this.cleanJsonString(text));
+        }
+    }
+
+    async loadPerfiles() {
+        try {
+            const response = await fetch('/datos/index.json');
+            const text = await response.text();
+            this.perfiles = JSON.parse(this.cleanJsonString(text));
+        } catch (e) {
+            console.error("Error cargando perfiles:", e);
+        }
+    }
+
+    cleanJsonString(text) {
+        return text.replace(/^const\s+\w+\s*=\s*/i, '').replace(/;$/g, '').trim();
+    }
+
+    async render() {
+        this.showLoading();
         if (this.currentCI) {
             await this.updatePerfilView();
         } else {
             await this.updateHomeView();
         }
-        
-        // Añadir loading states para mejor UX
-        this.setupLoadingStates();
+        this.updateInterface();
+        this.hideLoading();
     }
-    
-    async loadConfig() {
-        try {
-            // AJAX call usando Fetch API
-            const response = await fetch(`/conf/config${this.currentLang}.json`);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
-            const text = await response.text();
-            // Limpiar el JSON (remover 'const config = ')
-            const jsonStr = this.cleanJsonString(text);
-            this.config = JSON.parse(jsonStr);
-            
-            // Guardar en sessionStorage para caché
-            sessionStorage.setItem(`config_${this.currentLang}`, jsonStr);
-            
-        } catch (error) {
-            console.warn(`No se pudo cargar config ${this.currentLang}, usando ES como fallback`);
-            
-            // Intentar cargar desde caché primero
-            const cached = sessionStorage.getItem('config_ES');
-            if (cached) {
-                this.config = JSON.parse(cached);
+
+    async updateHomeView() {
+        const container = document.getElementById('app-content');
+        if (!container) return;
+
+        container.innerHTML = `
+            <section>
+                <div class="listado-estudiantes">
+                    <div class="contenedor-cajas" id="contenedor-estudiantes"></div>
+                </div>
+            </section>
+        `;
+
+        const contenedor = document.getElementById('contenedor-estudiantes');
+
+        this.perfiles.forEach(perfil => {
+            const estudianteDiv = document.createElement('div');
+            estudianteDiv.className = 'caja-estudiante';
+            estudianteDiv.id = `student-${perfil.ci}`;
+
+            if (perfil.ci === '28309031') {
+                // Lógica Andreina Responsive
+                estudianteDiv.innerHTML = `
+                    <a href="?ci=${perfil.ci}&lang=${this.currentLang}">
+                        <img src="/${perfil.ci}/${perfil.ci}Pequena.jpg" alt="${perfil.nombre}" class="foto-estudiante foto-pequena-responsive">
+                        <img src="/${perfil.ci}/${perfil.ci}Grande.jpg" alt="${perfil.nombre}" class="foto-estudiante foto-grande-responsive">
+                        <span class="nombre-estudiante">${perfil.nombre}</span>
+                    </a>`;
             } else {
-                const fallback = await fetch('/conf/configES.json');
-                const text = await fallback.text();
-                const jsonStr = this.cleanJsonString(text);
-                this.config = JSON.parse(jsonStr);
-                sessionStorage.setItem('config_ES', jsonStr);
+                // Lógica General
+                const imgSrc = perfil.imagen || `/${perfil.ci}/${perfil.ci}.jpg`;
+                estudianteDiv.innerHTML = `
+                    <a href="?ci=${perfil.ci}&lang=${this.currentLang}">
+                        <img src="${imgSrc}" alt="${perfil.nombre}" class="foto-estudiante" onerror="this.src='/img/default.jpg'"> 
+                        <span class="nombre-estudiante">${perfil.nombre}</span>
+                    </a>`;
             }
-        }
+            contenedor.appendChild(estudianteDiv);
+        });
+
+        this.realizarBusqueda();
     }
-    
-    async loadPerfiles() {
+
+    async updatePerfilView() {
         try {
-            // AJAX call para lista de perfiles
-            const response = await fetch('/datos/index.json');
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
+            const response = await fetch(`/${this.currentCI}/perfil.json`);
             const text = await response.text();
-            const jsonStr = this.cleanJsonString(text);
-            this.perfiles = JSON.parse(jsonStr);
+            const perfil = JSON.parse(this.cleanJsonString(text));
             
-            // Cachear en sessionStorage
-            sessionStorage.setItem('perfiles', jsonStr);
+            const container = document.getElementById('app-content');
             
-        } catch (error) {
-            console.error('Error cargando perfiles:', error);
-            
-            // Intentar desde caché
-            const cached = sessionStorage.getItem('perfiles');
-            if (cached) {
-                this.perfiles = JSON.parse(cached);
-            } else {
-                this.perfiles = [];
+            let imagenHTML = `<img src="/${perfil.ci}/${perfil.ci}.jpg" class="foto-perfil">`;
+            if (perfil.ci === '28309031') {
+                imagenHTML = `
+                    <img src="/${perfil.ci}/${perfil.ci}Pequena.jpg" class="foto-perfil foto-pequena-responsive">
+                    <img src="/${perfil.ci}/${perfil.ci}Grande.jpg" class="foto-perfil foto-grande-responsive">
+                `;
             }
+
+            container.innerHTML = `
+                <div class="contenedor-principal">
+                    <div class="foto">${imagenHTML}</div>
+                    <div class="ficha">
+                        <h1>${perfil.nombre}</h1>
+                        <p>${perfil.descripcion}</p>
+                        <div class="contenedor-datos">
+                            <div class="datos">
+                                <ul class="lista-datos">
+                                    <li>${this.config.color}:</li>
+                                    <li>${this.config.libro}:</li>
+                                    <li>${this.config.musica}:</li>
+                                    <li><b>${this.config.lenguajes}:</b></li>
+                                </ul>
+                            </div>
+                            <div class="MisDatos">
+                                <ul>
+                                    <li>${perfil.color}</li>
+                                    <li>${perfil.libro}</li>
+                                    <li>${perfil.musica}</li>
+                                    <li><b>${Array.isArray(perfil.lenguajes) ? perfil.lenguajes.join(', ') : perfil.lenguajes}</b></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p>${this.config.email.replace('[email]', '')} <a href="mailto:${perfil.email}" class="correo">${perfil.email}</a></p>
+                        <br>
+                        <a href="?lang=${this.currentLang}" class="volver-link">← Volver al listado</a>
+                    </div>
+                </div>
+            `;
+        } catch (e) {
+            this.currentCI = null;
+            this.render();
         }
     }
-    
-    async loadPerfil(ci) {
-        try {
-            // AJAX call para perfil específico
-            const response = await fetch(`/${ci}/perfil.json`);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
-            const text = await response.text();
-            const jsonStr = this.cleanJsonString(text);
-            const perfil = JSON.parse(jsonStr);
-            
-            // Cachear perfil individual
-            sessionStorage.setItem(`perfil_${ci}`, jsonStr);
-            
-            return perfil;
-        } catch (error) {
-            console.error(`Error cargando perfil ${ci}:`, error);
-            
-            // Intentar desde caché
-            const cached = sessionStorage.getItem(`perfil_${ci}`);
-            if (cached) {
-                return JSON.parse(cached);
-            }
-            return null;
-        }
-    }
-    
-    cleanJsonString(text) {
-        // Limpiar el string JSON removiendo 'const variable = ' y punto y coma
-        return text
-            .replace(/^const\s+\w+\s*=\s*/i, '')
-            .replace(/;$/g, '')
-            .trim();
-    }
-    
-    setupEventListeners() {
-        // Buscador con debounce para mejor performance
+
+    realizarBusqueda() {
         const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('search-button');
+        if (!searchInput) return;
+
+        const searchTerm = searchInput.value.trim();
+        const searchTermLower = searchTerm.toLowerCase();
         
-        if (searchInput && searchButton) {
-            let searchTimeout;
-            
-            const performSearch = () => {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    const searchTerm = searchInput.value.trim().toLowerCase();
-                    const students = document.querySelectorAll('.caja-estudiante');
-                    let found = false;
-                    
-                    students.forEach(student => {
-                        const name = student.querySelector('.nombre-estudiante').textContent.toLowerCase();
-                        if (name.includes(searchTerm) || searchTerm === '') {
-                            student.style.display = 'flex';
-                            found = true;
-                        } else {
-                            student.style.display = 'none';
-                        }
-                    });
-                    
-                    // Mostrar mensaje si no se encuentra
-                    this.showSearchMessage(found, searchTerm);
-                }, 300); // 300ms debounce
-            };
-            
-            searchInput.addEventListener('input', performSearch);
-            searchButton.addEventListener('click', performSearch);
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') performSearch();
+        const mensajeAnterior = document.getElementById('mensaje-no-encontrado');
+        if (mensajeAnterior) {
+            mensajeAnterior.remove();
+        }
+        
+        let estudiantesEncontrados = 0;
+        
+        document.querySelectorAll('.caja-estudiante').forEach(estudiante => {
+            const nombre = estudiante.querySelector('.nombre-estudiante').textContent.toLowerCase();
+            if (nombre.includes(searchTermLower) || searchTerm === '') {
+                estudiante.style.display = 'flex';
+                estudiantesEncontrados++;
+            } else {
+                estudiante.style.display = 'none';
+            }
+        });
+
+        if (estudiantesEncontrados === 0 && searchTerm !== '') {
+            const contenedor = document.getElementById('contenedor-estudiantes');
+            if (contenedor) {
+                const mensajeDiv = document.createElement('div');
+                mensajeDiv.id = 'mensaje-no-encontrado';
+                mensajeDiv.style.cssText = `
+                    text-align: center;
+                    font-size: 40px;
+                    color: #60add6;
+                    grid-column: 1 / -1;
+                    margin-top: 35%;
+                    margin-bottom: 35%;
+                `;
+                // Aquí usamos la variable del idioma desde el config cargado
+                mensajeDiv.textContent = `${this.config.EstudianteNoEntontrado} ${searchTerm}`;
+                contenedor.appendChild(mensajeDiv);
+            }
+        }
+    }
+
+    setupEventListeners() {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                if (this.currentCI) {
+                    window.history.pushState({}, '', `?lang=${this.currentLang}`);
+                    this.currentCI = null;
+                    this.render();
+                } else {
+                    this.realizarBusqueda();
+                }
             });
         }
-        
-        // Navegación entre perfiles con AJAX
-        document.addEventListener('click', async (e) => {
+
+        document.addEventListener('click', (e) => {
             const link = e.target.closest('a[href^="?"]');
             if (link) {
                 e.preventDefault();
-                
-                // Mostrar loading
-                this.showLoading();
-                
                 const url = new URL(link.href, window.location.origin);
-                const params = new URLSearchParams(url.search);
-                
-                // Actualizar URL sin recargar (SPA)
-                window.history.pushState({}, '', `?${params.toString()}`);
-                
-                // Cargar nuevo contenido
-                this.currentCI = params.get('ci');
-                if (this.currentCI) {
-                    await this.updatePerfilView();
-                } else {
-                    await this.updateHomeView();
-                }
-                
-                // Ocultar loading
-                this.hideLoading();
+                window.history.pushState({}, '', url.search);
+                this.currentCI = url.searchParams.get('ci');
+                this.render();
             }
         });
-        
-        // Manejar navegación con botones atrás/adelante
-        window.addEventListener('popstate', async () => {
+
+        window.addEventListener('popstate', () => {
             const urlParams = new URLSearchParams(window.location.search);
             this.currentCI = urlParams.get('ci');
-            
-            this.showLoading();
-            
-            if (this.currentCI) {
-                await this.updatePerfilView();
-            } else {
-                await this.updateHomeView();
-            }
-            
-            this.hideLoading();
+            this.render();
         });
     }
-    
-    setupLoadingStates() {
-        // Crear elemento de loading si no existe
-        if (!document.getElementById('loading-spinner')) {
-            const spinner = document.createElement('div');
-            spinner.id = 'loading-spinner';
-            spinner.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0,0,0,0.7);
-                color: white;
-                padding: 20px;
-                border-radius: 10px;
-                z-index: 1000;
-                display: none;
-            `;
-            spinner.innerHTML = 'Cargando...';
-            document.body.appendChild(spinner);
-        }
-    }
-    
-    showLoading() {
-        const spinner = document.getElementById('loading-spinner');
-        if (spinner) spinner.style.display = 'block';
-    }
-    
-    hideLoading() {
-        const spinner = document.getElementById('loading-spinner');
-        if (spinner) spinner.style.display = 'none';
-    }
-    
-    showSearchMessage(found, searchTerm) {
-        let message = document.getElementById('search-message');
-        if (!found && searchTerm !== '') {
-            if (!message) {
-                message = document.createElement('div');
-                message.id = 'search-message';
-                message.style.cssText = 'text-align: center; font-size: 18px; color: #60add6; grid-column: 1 / -1; margin: 20px;';
-                document.getElementById('contenedor-estudiantes').appendChild(message);
-            }
-            message.textContent = `${this.config.EstudianteNoEntontrado} "${searchTerm}"`;
-        } else if (message) {
-            message.remove();
-        }
-    }
-    
-    async updateHomeView() {
-        if (!this.perfiles || !this.config) return;
-        
-        // Actualizar elementos de interfaz
-        this.updateInterface();
-        
-        // Renderizar estudiantes
-        const container = document.getElementById('contenedor-estudiantes');
-        if (!container) return;
-        
-        container.innerHTML = this.perfiles.map(perfil => {
-            const isAndreina = perfil.ci === '28309031';
-            const imageHtml = isAndreina 
-                ? `<img src="/${perfil.ci}/${perfil.ci}Pequena.jpg" alt="${perfil.nombre}" class="foto-estudiante foto-pequena-responsive" loading="lazy">
-                   <img src="/${perfil.ci}/${perfil.ci}Grande.jpg" alt="${perfil.nombre}" class="foto-estudiante foto-grande-responsive" loading="lazy">`
-                : `<img src="/${perfil.imagen}" alt="${perfil.nombre}" class="foto-estudiante" loading="lazy" onerror="this.src='/dummies/dummy1/dummy.jpg'">`;
-            
-            return `
-                <div class="caja-estudiante" id="student-${perfil.ci}">
-                    <a href="?ci=${perfil.ci}&lang=${this.currentLang}" class="student-link">
-                        ${imageHtml}
-                        <span class="nombre-estudiante">${perfil.nombre}</span>
-                    </a>
-                </div>
-            `;
-        }).join('');
-        
-        // Actualizar título
-        document.title = `${this.config.sitio[0]}[${this.config.sitio[1]}] ${this.config.sitio[2]}`;
-    }
-    
-    async updatePerfilView() {
-        if (!this.currentCI || !this.config) return;
-        
-        const perfil = await this.loadPerfil(this.currentCI);
-        if (!perfil) {
-            console.error('Perfil no encontrado');
-            // Redirigir al home si no existe
-            window.history.pushState({}, '', `?lang=${this.currentLang}`);
-            await this.updateHomeView();
-            return;
-        }
-        
-        // Actualizar título
-        document.title = perfil.nombre;
-        
-        // Actualizar etiquetas de datos
-        const labelsList = document.getElementById('lista-etiquetas');
-        if (labelsList) {
-            labelsList.innerHTML = `
-                <li class="item-dato">${this.config.color}:</li>
-                <li class="item-dato">${this.config.libro}:</li>
-                <li class="item-dato">${this.config.musica}:</li>
-                <li class="item-dato">${this.config.video_juego}:</li>
-                <li class="item-dato"><b>${this.config.lenguajes}:</b></li>
-            `;
-        }
-        
-        // Actualizar datos del perfil
-        const datosList = document.getElementById('mis-datos-lista');
-        if (datosList) {
-            const formatValue = (value) => 
-                Array.isArray(value) ? value.join(', ') : value;
-            
-            datosList.innerHTML = `
-                <li>${formatValue(perfil.color)}</li>
-                <li>${formatValue(perfil.libro)}</li>
-                <li>${formatValue(perfil.musica)}</li>
-                <li>${formatValue(perfil.video_juego)}</li>
-                <li><b>${formatValue(perfil.lenguajes)}</b></li>
-            `;
-        }
-        
-        // Actualizar email link
-        const emailLink = document.getElementById('email-link');
-        if (emailLink) {
-            emailLink.href = `mailto:${perfil.email}`;
-            emailLink.textContent = perfil.email;
-        }
-    }
-    
+
     updateInterface() {
-        // Actualizar elementos comunes
-        const greeting = document.getElementById('greeting');
-        if (greeting && this.config) {
-            greeting.innerHTML = `${this.config.saludo} <p>, Andreina Velasquez</p>`;
-        }
-        
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput && this.config) {
-            searchInput.placeholder = this.config.nombre;
-        }
-        
-        const searchButton = document.getElementById('search-button');
-        if (searchButton && this.config) {
-            searchButton.textContent = this.config.buscar;
-        }
-        
-        const footerText = document.getElementById('footer-text');
-        if (footerText && this.config) {
-            footerText.textContent = this.config.copyRight;
+        if (!this.config) return;
+        document.getElementById('greeting').innerHTML = `${this.config.saludo} <p>, Andreina Velasquez</p>`;
+        document.getElementById('searchInput').placeholder = this.config.nombre;
+        document.getElementById('search-button').textContent = this.config.buscar;
+        document.getElementById('footer-text').textContent = this.config.copyRight;
+    }
+
+    setupLoadingStates() {
+        if (!document.getElementById('loading-spinner')) {
+            const s = document.createElement('div');
+            s.id = 'loading-spinner';
+            s.style.cssText = "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.7); color:white; padding:15px; border-radius:8px; display:none; z-index:1000;";
+            s.textContent = '...';
+            document.body.appendChild(s);
         }
     }
+
+    showLoading() { document.getElementById('loading-spinner').style.display = 'block'; }
+    hideLoading() { document.getElementById('loading-spinner').style.display = 'none'; }
 }
 
-// Inicializar aplicación cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
-    new ATIApp();
-});
+document.addEventListener('DOMContentLoaded', () => new ATIApp());
