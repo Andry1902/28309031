@@ -8,25 +8,25 @@ RUN apt-get update -y && apt-get upgrade -y && \
     apache2 \
     apache2-utils \
     python3 \
-    python3-pip \
-    python3-venv \
     libapache2-mod-wsgi-py3 \
-    curl \
-    git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Habilitar módulos Apache
-RUN a2enmod wsgi rewrite headers expires
+RUN a2enmod wsgi
 
-# Copiar TODO el contenido del repositorio ATI al contenedor
+# Copiar TODO el contenido al contenedor
 COPY . /var/www/html/
 
-# Configurar permisos
-RUN chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html
+# Configurar permisos CORRECTAMENTE - ESTO ES CLAVE
+RUN chown -R www-data:www-data /var/www && \
+    chmod -R 755 /var/www && \
+    find /var/www/html -type f -exec chmod 644 {} \; && \
+    find /var/www/html -type d -exec chmod 755 {} \;
 
-# Configuración Apache directamente en el Dockerfile
+# Configuración Apache CORRECTA
+RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
+
 RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/ati.conf && \
     echo '    ServerName localhost' >> /etc/apache2/sites-available/ati.conf && \
     echo '    DocumentRoot /var/www/html' >> /etc/apache2/sites-available/ati.conf && \
@@ -34,40 +34,68 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/ati.conf && \
     echo '    ErrorLog ${APACHE_LOG_DIR}/error.log' >> /etc/apache2/sites-available/ati.conf && \
     echo '    CustomLog ${APACHE_LOG_DIR}/access.log combined' >> /etc/apache2/sites-available/ati.conf && \
     echo '' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    # Archivos estáticos' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    Alias /css/ "/var/www/css/"' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    Alias /js/ "/var/www/js/"' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    Alias /conf/ "/var/www/conf/"' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    Alias /datos/ "/var/www/datos/"' >> /etc/apache2/sites-available/ati.conf && \
-    echo '' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    <Directory "/var/www/html">' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    <Directory /var/www/html>' >> /etc/apache2/sites-available/ati.conf && \
     echo '        Options Indexes FollowSymLinks' >> /etc/apache2/sites-available/ati.conf && \
     echo '        AllowOverride None' >> /etc/apache2/sites-available/ati.conf && \
     echo '        Require all granted' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        DirectoryIndex index.py' >> /etc/apache2/sites-available/ati.conf && \
     echo '    </Directory>' >> /etc/apache2/sites-available/ati.conf && \
     echo '' >> /etc/apache2/sites-available/ati.conf && \
     echo '    # WSGI Configuration' >> /etc/apache2/sites-available/ati.conf && \
     echo '    WSGIScriptAlias / /var/www/html/index.py' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    WSGIDaemonProcess ati python-home=/usr python-path=/var/www/html' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    WSGIDaemonProcess ati python-path=/var/www/html python-home=/usr' >> /etc/apache2/sites-available/ati.conf && \
     echo '    WSGIProcessGroup ati' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    WSGIScriptReloading On' >> /etc/apache2/sites-available/ati.conf && \
     echo '' >> /etc/apache2/sites-available/ati.conf && \
     echo '    <Directory /var/www/html>' >> /etc/apache2/sites-available/ati.conf && \
-    echo '        WSGIApplicationGroup %{GLOBAL}' >> /etc/apache2/sites-available/ati.conf && \
     echo '        <Files index.py>' >> /etc/apache2/sites-available/ati.conf && \
     echo '            Require all granted' >> /etc/apache2/sites-available/ati.conf && \
     echo '        </Files>' >> /etc/apache2/sites-available/ati.conf && \
     echo '    </Directory>' >> /etc/apache2/sites-available/ati.conf && \
     echo '' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    # SPA Routing - redirect everything to index.py' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    RewriteEngine On' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    RewriteCond %{REQUEST_FILENAME} !-f' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    RewriteCond %{REQUEST_FILENAME} !-d' >> /etc/apache2/sites-available/ati.conf && \
-    echo '    RewriteRule ^(.*)$ / [QSA,L]' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    # Alias para archivos estáticos' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    Alias /css /var/www/html/css' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    <Directory /var/www/html/css>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Options Indexes FollowSymLinks' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Require all granted' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    </Directory>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    Alias /js /var/www/html/js' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    <Directory /var/www/html/js>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Options Indexes FollowSymLinks' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Require all granted' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    </Directory>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    Alias /img /var/www/html/img' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    <Directory /var/www/html/img>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Options Indexes FollowSymLinks' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Require all granted' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    </Directory>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    Alias /conf /var/www/html/conf' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    <Directory /var/www/html/conf>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Options Indexes FollowSymLinks' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Require all granted' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    </Directory>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    Alias /datos /var/www/html/datos' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    <Directory /var/www/html/datos>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Options Indexes FollowSymLinks' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Require all granted' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    </Directory>' >> /etc/apache2/sites-available/ati.conf && \
+    echo '' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    # Permitir acceso a directorios de estudiantes' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    <DirectoryMatch "/var/www/html/(19|18|14|20|28)[0-9]+">' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Options Indexes FollowSymLinks' >> /etc/apache2/sites-available/ati.conf && \
+    echo '        Require all granted' >> /etc/apache2/sites-available/ati.conf && \
+    echo '    </DirectoryMatch>' >> /etc/apache2/sites-available/ati.conf && \
     echo '</VirtualHost>' >> /etc/apache2/sites-available/ati.conf
 
-# Habilitar sitio
+# Deshabilitar la configuración por defecto y habilitar la nuestra
 RUN a2dissite 000-default.conf && a2ensite ati.conf
 
+# Exponer puerto
 EXPOSE 80
 
+# Comando para iniciar Apache
 CMD ["apache2ctl", "-D", "FOREGROUND"]

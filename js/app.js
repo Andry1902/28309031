@@ -37,7 +37,7 @@ class ATIApp {
     async loadConfig() {
         try {
             // AJAX call usando Fetch API
-            const response = await fetch(`/ATI/conf/config${this.currentLang}.json`);
+            const response = await fetch(`/conf/config${this.currentLang}.json`);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const text = await response.text();
@@ -56,7 +56,7 @@ class ATIApp {
             if (cached) {
                 this.config = JSON.parse(cached);
             } else {
-                const fallback = await fetch('/ATI/conf/configES.json');
+                const fallback = await fetch('/conf/configES.json');
                 const text = await fallback.text();
                 const jsonStr = this.cleanJsonString(text);
                 this.config = JSON.parse(jsonStr);
@@ -68,7 +68,7 @@ class ATIApp {
     async loadPerfiles() {
         try {
             // AJAX call para lista de perfiles
-            const response = await fetch('/ATI/datos/index.json');
+            const response = await fetch('/datos/index.json');
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const text = await response.text();
@@ -94,7 +94,7 @@ class ATIApp {
     async loadPerfil(ci) {
         try {
             // AJAX call para perfil específico
-            const response = await fetch(`/ATI/${ci}/perfil.json`);
+            const response = await fetch(`/${ci}/perfil.json`);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const text = await response.text();
@@ -267,9 +267,9 @@ class ATIApp {
         container.innerHTML = this.perfiles.map(perfil => {
             const isAndreina = perfil.ci === '28309031';
             const imageHtml = isAndreina 
-                ? `<img src="/ATI/${perfil.ci}/${perfil.ci}Pequena.jpg" alt="${perfil.nombre}" class="foto-estudiante foto-pequena-responsive" loading="lazy">
-                   <img src="/ATI/${perfil.ci}/${perfil.ci}Grande.jpg" alt="${perfil.nombre}" class="foto-estudiante foto-grande-responsive" loading="lazy">`
-                : `<img src="/ATI/${perfil.imagen}" alt="${perfil.nombre}" class="foto-estudiante" loading="lazy" onerror="this.src='/ATI/dummies/dummy1/dummy.jpg'">`;
+                ? `<img src="/${perfil.ci}/${perfil.ci}Pequena.jpg" alt="${perfil.nombre}" class="foto-estudiante foto-pequena-responsive" loading="lazy">
+                   <img src="/${perfil.ci}/${perfil.ci}Grande.jpg" alt="${perfil.nombre}" class="foto-estudiante foto-grande-responsive" loading="lazy">`
+                : `<img src="/${perfil.imagen}" alt="${perfil.nombre}" class="foto-estudiante" loading="lazy" onerror="this.src='/dummies/dummy1/dummy.jpg'">`;
             
             return `
                 <div class="caja-estudiante" id="student-${perfil.ci}">

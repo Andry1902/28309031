@@ -24,8 +24,8 @@ def cargar_json(archivo):
                 if inicio != -1:
                     contenido = contenido[inicio:]
                 # También eliminar el punto y coma final si existe
-                if contenido.strip().endswith(';'):
-                    contenido = contenido.rstrip(';')
+                if contenido.strip().endswith(']'):
+                    contenido = contenido.rstrip(']')
             return json.loads(contenido)
     except Exception as e:
         print(f"Error cargando {archivo}: {e}")
@@ -77,7 +77,7 @@ def generar_template_html(tipo='home', datos=None, config=None, lang='ES'):
         <p id="footer-text">{config['copyRight']}</p>
     </footer>
     
-    <script type="module" src="/ATI/js/app.js"></script>
+    <script type="module" src="/js/app.js"></script>
 </body>
 </html>'''
     
@@ -85,20 +85,20 @@ def generar_template_html(tipo='home', datos=None, config=None, lang='ES'):
         # Determinar qué imagen mostrar basado en el estudiante
         if datos['ci'] == '28309031':
             img_html = f'''
-            <img src="/ATI/{datos['ci']}/{datos['ci']}Pequena.jpg" alt="{datos['nombre']}" class="foto-perfil foto-pequena-responsive">
-            <img src="/ATI/{datos['ci']}/{datos['ci']}Grande.jpg" alt="{datos['nombre']}" class="foto-perfil foto-grande-responsive">
+            <img src="/{datos['ci']}/{datos['ci']}Pequena.jpg" alt="{datos['nombre']}" class="foto-perfil foto-pequena-responsive">
+            <img src="/{datos['ci']}/{datos['ci']}Grande.jpg" alt="{datos['nombre']}" class="foto-perfil foto-grande-responsive">
             '''
         else:
-            img_html = f'<img src="/ATI/{datos["ci"]}/{datos["ci"]}.jpg" alt="{datos["nombre"]}" class="foto-perfil">'
+            img_html = f'<img src="/{datos["ci"]}/{datos["ci"]}.jpg" alt="{datos["nombre"]}" class="foto-perfil">'
         
         return f'''<!DOCTYPE html>
 <html lang="{lang.lower()}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="/ATI/img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <title>{datos['nombre']}</title>
-    <link rel="stylesheet" href="/ATI/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div class="contenedor-principal">
@@ -130,7 +130,7 @@ def generar_template_html(tipo='home', datos=None, config=None, lang='ES'):
         </div>
     </div>
     
-    <script type="module" src="/ATI/js/app.js"></script>
+    <script type="module" src="/js/app.js"></script>
 </body>
 </html>'''
 
