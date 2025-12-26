@@ -31,19 +31,16 @@ def servir_json(contenido, start_response, cache_control='no-cache'):
     return [json_str.encode('utf-8')]
 
 def generar_shell_html(config, lang='ES'):
-    """Genera la estructura base (Shell) que la SPA usará para inyectar contenido"""
     return f'''<!DOCTYPE html>
 <html lang="{lang.lower()}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
-    <title>{config['sitio'][0]}[{config['sitio'][1]}] {config['sitio'][2]}</title>
+    <title>{config['sitio'][0]} - {config['sitio'][2]}</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <header>
-        <nav>
+    <header id="main-header"> <nav>
             <ul>
                 <li class="encabezado">{config['sitio'][0]}<span class="UCV">[{config['sitio'][1]}]</span> {config['sitio'][2]}</li>
                 <li class="encabezado" id="greeting">{config['saludo']} <p>, Andreina Velasquez</p></li>
@@ -58,14 +55,45 @@ def generar_shell_html(config, lang='ES'):
     </header>
 
     <main id="app-content">
-        <div class="listado-estudiantes">
-            <div class="contenedor-cajas" id="contenedor-estudiantes">
+        <section id="view-home" class="view">
+            <div class="listado-estudiantes">
+                <div class="contenedor-cajas" id="contenedor-estudiantes"></div>
+            </div>
+        </section>
+
+        <section id="view-perfil" class="view" style="display: none;">
+            <div class="contenedor-principal">
+                <div class="foto" id="perfil-foto-container"></div>
+                <div class="ficha">
+                    <h1 id="perfil-nombre"></h1>
+                    <p id="perfil-descripcion"></p>
+                    <div class="contenedor-datos">
+                        <div class="datos">
+                            <ul class="lista-datos">
+                                <li id="label-color"></li>
+                                <li id="label-libro"></li>
+                                <li id="label-musica"></li>
+                                <li><b id="label-lenguajes"></b></li>
+                            </ul>
+                        </div>
+                        <div class="MisDatos">
+                            <ul>
+                                <li id="val-color"></li>
+                                <li id="val-libro"></li>
+                                <li id="val-musica"></li>
+                                <li><b id="val-lenguajes"></b></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p id="perfil-email-box"></p>
+                    <br>
+                    <a href="?lang={lang}" class="volver-link">← Volver al listado</a>
                 </div>
-        </div>
+            </div>
+        </section>
     </main>
 
-    <footer>
-        <p id="footer-text">{config['copyRight']}</p>
+    <footer id="main-footer"> <p id="footer-text">{config['copyRight']}</p>
     </footer>
     
     <script type="module" src="/js/app.js"></script>
@@ -75,7 +103,7 @@ def generar_shell_html(config, lang='ES'):
 def application(environ, start_response):
     path_info = environ.get('PATH_INFO', '')
     
-    # Manejo de solicitudes de datos JSON
+    # Manejo de JSON
     if path_info.endswith('.json'):
         parts = path_info.strip('/').split('/')
         if len(parts) == 2 and parts[1] == 'perfil.json':
@@ -87,7 +115,7 @@ def application(environ, start_response):
         elif path_info.startswith('/conf/'):
             return servir_json(cargar_json(os.path.join(CONF_DIR, os.path.basename(path_info))), start_response)
 
-    # Para cualquier otra ruta, servimos la base HTML
+
     params = urllib.parse.parse_qs(environ.get('QUERY_STRING', ''))
     lang = params.get('lang', ['ES'])[0].upper()
     config = cargar_json(os.path.join(CONF_DIR, f'config{lang}.json')) or cargar_json(os.path.join(CONF_DIR, 'configES.json'))

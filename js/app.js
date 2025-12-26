@@ -46,111 +46,101 @@ class ATIApp {
         return text.replace(/^const\s+\w+\s*=\s*/i, '').replace(/;$/g, '').trim();
     }
 
-    async render() {
+    render() {
         this.showLoading();
+        
+        // Referencias a los elementos
+        const header = document.getElementById('main-header');
+        const footer = document.getElementById('main-footer');
+        const viewHome = document.getElementById('view-home');
+        const viewPerfil = document.getElementById('view-perfil');
+
         if (this.currentCI) {
-            await this.updatePerfilView();
+            // --- VISTA PERFIL ---
+            this.updatePerfilView();
+            
+            // Ocultar elementos comunes
+            if (header) header.style.display = 'none';
+            if (footer) footer.style.display = 'none';
+            
+            // Switch de vistas
+            viewHome.style.display = 'none';
+            viewPerfil.style.display = 'block';
         } else {
-            await this.updateHomeView();
+            // --- VISTA LISTADO ---
+            this.updateHomeView();
+            
+            // Mostrar elementos comunes
+            if (header) header.style.display = 'block';
+            if (footer) footer.style.display = 'block';
+            
+            // Switch de vistas
+            viewHome.style.display = 'block';
+            viewPerfil.style.display = 'none';
         }
+        
         this.updateInterface();
         this.hideLoading();
     }
 
     async updateHomeView() {
-        const container = document.getElementById('app-content');
-        if (!container) return;
-
-        container.innerHTML = `
-            <section>
-                <div class="listado-estudiantes">
-                    <div class="contenedor-cajas" id="contenedor-estudiantes"></div>
-                </div>
-            </section>
-        `;
-
         const contenedor = document.getElementById('contenedor-estudiantes');
+        contenedor.innerHTML = ''; // Limpiar previo
 
         this.perfiles.forEach(perfil => {
-            const estudianteDiv = document.createElement('div');
-            estudianteDiv.className = 'caja-estudiante';
-            estudianteDiv.id = `student-${perfil.ci}`;
+            const item = document.createElement('div');
+            item.className = 'caja-estudiante';
+            
+            const isAndreina = perfil.ci === '28309031';
+            const imgPath = isAndreina ? `/${perfil.ci}/${perfil.ci}` : (perfil.imagen || `/${perfil.ci}/${perfil.ci}.jpg`);
 
-            if (perfil.ci === '28309031') {
-                // Lógica Andreina Responsive
-                estudianteDiv.innerHTML = `
-                    <a href="?ci=${perfil.ci}&lang=${this.currentLang}">
-                        <img src="/${perfil.ci}/${perfil.ci}Pequena.jpg" alt="${perfil.nombre}" class="foto-estudiante foto-pequena-responsive">
-                        <img src="/${perfil.ci}/${perfil.ci}Grande.jpg" alt="${perfil.nombre}" class="foto-estudiante foto-grande-responsive">
-                        <span class="nombre-estudiante">${perfil.nombre}</span>
-                    </a>`;
-            } else {
-                // Lógica General
-                const imgSrc = perfil.imagen || `/${perfil.ci}/${perfil.ci}.jpg`;
-                estudianteDiv.innerHTML = `
-                    <a href="?ci=${perfil.ci}&lang=${this.currentLang}">
-                        <img src="${imgSrc}" alt="${perfil.nombre}" class="foto-estudiante" onerror="this.src='/img/default.jpg'"> 
-                        <span class="nombre-estudiante">${perfil.nombre}</span>
-                    </a>`;
-            }
-            contenedor.appendChild(estudianteDiv);
+            item.innerHTML = `
+                <a href="?ci=${perfil.ci}&lang=${this.currentLang}">
+                    <img src="${isAndreina ? imgPath+'Pequena.jpg' : imgPath}" 
+                        class="foto-estudiante ${isAndreina ? 'foto-pequena-responsive' : ''}" 
+                        onerror="this.src='/img/default.jpg'">
+                    ${isAndreina ? `<img src="${imgPath}Grande.jpg" class="foto-estudiante foto-grande-responsive">` : ''}
+                    <span class="nombre-estudiante">${perfil.nombre}</span>
+                </a>`;
+            contenedor.appendChild(item);
         });
-
-        this.realizarBusqueda();
     }
 
-    async updatePerfilView() {
-        try {
-            const response = await fetch(`/${this.currentCI}/perfil.json`);
-            const text = await response.text();
-            const perfil = JSON.parse(this.cleanJsonString(text));
+ async updatePerfilView() {
+    try {
+        const response = await fetch(`/${this.currentCI}/perfil.json`);
+        const text = await response.text();
+        const perfil = JSON.parse(this.cleanJsonString(text));
+        
+        document.getElementById('perfil-nombre').textContent = perfil.nombre;
+        document.getElementById('perfil-descripcion').textContent = perfil.descripcion;
+        
+        document.getElementById('label-color').textContent = `${this.config.color}:`;
+        document.getElementById('label-libro').textContent = `${this.config.libro}:`;
+        document.getElementById('label-musica').textContent = `${this.config.musica}:`; 
+        document.getElementById('label-lenguajes').textContent = `${this.config.lenguajes}:`; 
+        
+        document.getElementById('val-color').textContent = perfil.color;
+        document.getElementById('val-libro').textContent = perfil.libro; 
+        document.getElementById('val-musica').textContent = perfil.musica; 
+        
+        const lenguajes = Array.isArray(perfil.lenguajes) ? perfil.lenguajes.join(', ') : perfil.lenguajes;
+        document.getElementById('val-lenguajes').textContent = lenguajes;
             
-            const container = document.getElementById('app-content');
-            
-            let imagenHTML = `<img src="/${perfil.ci}/${perfil.ci}.jpg" class="foto-perfil">`;
+            const fotoCont = document.getElementById('perfil-foto-container');
             if (perfil.ci === '28309031') {
-                imagenHTML = `
+                fotoCont.innerHTML = `
                     <img src="/${perfil.ci}/${perfil.ci}Pequena.jpg" class="foto-perfil foto-pequena-responsive">
-                    <img src="/${perfil.ci}/${perfil.ci}Grande.jpg" class="foto-perfil foto-grande-responsive">
-                `;
+                    <img src="/${perfil.ci}/${perfil.ci}Grande.jpg" class="foto-perfil foto-grande-responsive">`;
+            } else {
+                fotoCont.innerHTML = `<img src="/${perfil.ci}/${perfil.ci}.jpg" class="foto-perfil">`;
             }
-
-            container.innerHTML = `
-                <div class="contenedor-principal">
-                    <div class="foto">${imagenHTML}</div>
-                    <div class="ficha">
-                        <h1>${perfil.nombre}</h1>
-                        <p>${perfil.descripcion}</p>
-                        <div class="contenedor-datos">
-                            <div class="datos">
-                                <ul class="lista-datos">
-                                    <li>${this.config.color}:</li>
-                                    <li>${this.config.libro}:</li>
-                                    <li>${this.config.musica}:</li>
-                                    <li><b>${this.config.lenguajes}:</b></li>
-                                </ul>
-                            </div>
-                            <div class="MisDatos">
-                                <ul>
-                                    <li>${perfil.color}</li>
-                                    <li>${perfil.libro}</li>
-                                    <li>${perfil.musica}</li>
-                                    <li><b>${Array.isArray(perfil.lenguajes) ? perfil.lenguajes.join(', ') : perfil.lenguajes}</b></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <p>${this.config.email.replace('[email]', '')} <a href="mailto:${perfil.email}" class="correo">${perfil.email}</a></p>
-                        <br>
-                        <a href="?lang=${this.currentLang}" class="volver-link">← Volver al listado</a>
-                    </div>
-                </div>
-            `;
+            
         } catch (e) {
             this.currentCI = null;
             this.render();
         }
     }
-
     realizarBusqueda() {
         const searchInput = document.getElementById('searchInput');
         if (!searchInput) return;
@@ -188,7 +178,6 @@ class ATIApp {
                     margin-top: 35%;
                     margin-bottom: 35%;
                 `;
-                // Aquí usamos la variable del idioma desde el config cargado
                 mensajeDiv.textContent = `${this.config.EstudianteNoEntontrado} ${searchTerm}`;
                 contenedor.appendChild(mensajeDiv);
             }
